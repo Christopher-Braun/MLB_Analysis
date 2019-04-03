@@ -8,6 +8,7 @@ from datetime import date
 from datetime import datetime
 import time
 
+
 games_total = pd.DataFrame(np.ones((1,12)), columns = ['date', 'team_away', 'team_home', 'pitcher_away', 'pitcher_home', 'expected_runs_away', 'actual_runs_away', 'expected_runs_home', 'actual_runs_home', 'temp', 'humidity', 'rain'])
 from constant_variables import TEAM_INITIALS
 def get_team_ini(team_ini):
@@ -230,6 +231,13 @@ def laa_last_game(games):
 def atlanta_fix(games):
     if date_today.isoformat() == '2018-05-01':
         del_game = True
+        #table5 = np.ravel(games)
+        #table5_reshape = np.reshape(np.ravel(games),(len(np.ravel(games))//3,3))
+        #i = np.where(table5 == 'ATL')[0]
+        #table5_reshape = np.delete(table5_reshape, [i-2, i-1, i])
+        #table5_reshape = np.reshape(np.ravel(table5_reshape[:-3]),(len(np.ravel(table5_reshape))//6,6))
+        #table5_new = [tuple(game) for game in table5_reshape]
+        #del_game = True
         games = games[:-1]
         return games, del_game
     else:
@@ -249,8 +257,12 @@ def delete_atl_weather(games):
             game_table3.remove(game_table3[index[0]])
     return game_table3
 
+date_start = int(input("Input Date to Work Back From (yyyy): ")), int(input("Input Date to Work Back From (mm): ")), int(input("Input Date to Work Back From (dd): "))
+date_finish = int(input("Input Date to End on (yyyy): ")), int(input("Input Date to End on (mm): ")), int(input("Input Date to End on (dd): "))
+file_name = input('Name of file to save game data under: ')
+
 # Set arbitrary date        
-date_today = 1
+date_today = date(date_start[0], date_start[1], date_start[2])
 
 # Scrape game data for each day
 options = webdriver.ChromeOptions()
@@ -261,7 +273,7 @@ driver.find_element_by_name("BACK").click()
 time.sleep(2)
 
 # Start Scraping
-while date_today != date(2018, 3, 29):
+while date_today != date(date_finish[0], date_finish[1], date_finish[2]):
 
     # Scrape the current page
     soup = BeautifulSoup(driver.page_source, 'lxml')
@@ -376,4 +388,6 @@ while date_today != date(2018, 3, 29):
     
 driver.quit()
 
-games_by_date.to_csv('CSV/games_by_date.csv', mode='w', index=False, header=True)
+games_by_date.to_csv('CSV/'+file_name+'.csv', mode='w', index=False, header=True)
+
+print('I have collected all of the information you requested and saved it in your prefered destination')
