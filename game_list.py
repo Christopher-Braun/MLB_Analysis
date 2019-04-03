@@ -231,13 +231,6 @@ def laa_last_game(games):
 def atlanta_fix(games):
     if date_today.isoformat() == '2018-05-01':
         del_game = True
-        #table5 = np.ravel(games)
-        #table5_reshape = np.reshape(np.ravel(games),(len(np.ravel(games))//3,3))
-        #i = np.where(table5 == 'ATL')[0]
-        #table5_reshape = np.delete(table5_reshape, [i-2, i-1, i])
-        #table5_reshape = np.reshape(np.ravel(table5_reshape[:-3]),(len(np.ravel(table5_reshape))//6,6))
-        #table5_new = [tuple(game) for game in table5_reshape]
-        #del_game = True
         games = games[:-1]
         return games, del_game
     else:
@@ -257,12 +250,11 @@ def delete_atl_weather(games):
             game_table3.remove(game_table3[index[0]])
     return game_table3
 
-date_start = int(input("Input Date to Work Back From (yyyy): ")), int(input("Input Date to Work Back From (mm): ")), int(input("Input Date to Work Back From (dd): "))
 date_finish = int(input("Input Date to End on (yyyy): ")), int(input("Input Date to End on (mm): ")), int(input("Input Date to End on (dd): "))
 file_name = input('Name of file to save game data under: ')
 
 # Set arbitrary date        
-date_today = date(date_start[0], date_start[1], date_start[2])
+date_today = 1
 
 # Scrape game data for each day
 options = webdriver.ChromeOptions()
