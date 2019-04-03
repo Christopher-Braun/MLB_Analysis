@@ -230,13 +230,6 @@ def laa_last_game(games):
 def atlanta_fix(games):
     if date_today.isoformat() == '2018-05-01':
         del_game = True
-        #table5 = np.ravel(games)
-        #table5_reshape = np.reshape(np.ravel(games),(len(np.ravel(games))//3,3))
-        #i = np.where(table5 == 'ATL')[0]
-        #table5_reshape = np.delete(table5_reshape, [i-2, i-1, i])
-        #table5_reshape = np.reshape(np.ravel(table5_reshape[:-3]),(len(np.ravel(table5_reshape))//6,6))
-        #table5_new = [tuple(game) for game in table5_reshape]
-        #del_game = True
         games = games[:-1]
         return games, del_game
     else:
