@@ -376,4 +376,4 @@ while date_today != date(2018, 3, 29):
     
 driver.quit()
 
-games_by_date.to_csv('games_by_date.csv', mode='w', index=False, header=True)
+games_by_date.to_csv('CSV/games_by_date.csv', mode='w', index=False, header=True)
