@@ -8,7 +8,6 @@ from datetime import date
 from datetime import datetime
 import time
 
-
 games_total = pd.DataFrame(np.ones((1,12)), columns = ['date', 'team_away', 'team_home', 'pitcher_away', 'pitcher_home', 'expected_runs_away', 'actual_runs_away', 'expected_runs_home', 'actual_runs_home', 'temp', 'humidity', 'rain'])
 from constant_variables import TEAM_INITIALS
 def get_team_ini(team_ini):
