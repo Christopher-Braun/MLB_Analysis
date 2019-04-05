@@ -1,5 +1,6 @@
 #! python3
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
@@ -304,8 +305,16 @@ options = webdriver.ChromeOptions()
 options.add_argument('window-size=1200x600')
 driver = webdriver.Chrome(chrome_options=options)
 driver.get("https://baseballmonster.com/boxscores.aspx")
-driver.find_element_by_name("BACK").click()
+select = Select(driver.find_element_by_id('ContentPlaceHolder1_DataSetUserControl1_DataSetDropDownList'))
+select.select_by_visible_text("MLB 2018")
+value = driver.find_element_by_xpath('//*[@id="ContentPlaceHolder1_Calendar1"]/tbody/tr[1]/td/table/tbody/tr/td[2]')
+while value.text != 'October 2018':
+    driver.find_element_by_xpath('//*[@id="ContentPlaceHolder1_Calendar1"]/tbody/tr[1]/td/table/tbody/tr/td[1]/a').click()
+    value = driver.find_element_by_xpath('//*[@id="ContentPlaceHolder1_Calendar1"]/tbody/tr[1]/td/table/tbody/tr/td[2]')
+driver.find_element_by_xpath('//*[@id="ContentPlaceHolder1_Calendar1"]/tbody/tr[3]/td[2]/a').click()
+driver.find_element_by_id('ContentPlaceHolder1_RefreshButton').click()
 time.sleep(2)
+
 
 # Start Scraping
 while date_today != date(date_finish[0], date_finish[1], date_finish[2]):
