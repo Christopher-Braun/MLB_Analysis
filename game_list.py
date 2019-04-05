@@ -293,8 +293,8 @@ def remove_ohtani(date, table):
 
 
 #date_start = int(input("Input Date to Work Back From (yyyy): ")), int(input("Input Date to Work Back From (mm): ")), int(input("Input Date to Work Back From (dd): "))
-date_finish = int(input("Input Date to End on (yyyy): ")), int(input("Input Date to End on (mm): ")), int(input("Input Date to End on (dd): "))
-file_name = input('Name of file to save game data under: ')
+date_finish = int(input("Input Date to End on (yyyy): ")), int(input("Input Date to End on (m): ")), int(input("Input Date to End on (d): "))
+#file_name = input('Name of file to save game data under: ')
 
 # Set arbitrary date        
 date_today = 1
@@ -418,6 +418,6 @@ while date_today != date(date_finish[0], date_finish[1], date_finish[2]):
     
 driver.quit()
 
-games_by_date.to_csv('CSV/'+file_name+'.csv', mode='w', index=False, header=True)
+games_by_date.to_csv('CSV/games_by_date.csv', mode='w', index=False, header=True)
 
 print('I have collected all of the information you requested and saved it in your prefered destination')
