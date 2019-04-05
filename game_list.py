@@ -123,7 +123,8 @@ def trade_team(game):
         game = game[0:5]+(traded_players[game[3]][1],)
     return game
 
-shohei_ohtani_games =['2018-04-01', '2018-04-08', '2018-04-17', '2018-05-01', '2018-05-06', '2018-05-13', '2018-05-20', '2018-05-30', '2018-06-06', '2018-09-02']
+# missing  '2018-04-08' taken care of another way
+shohei_ohtani_games =['2018-04-01', '2018-04-17', '2018-04-24', '2018-05-06', '2018-05-13', '2018-05-20', '2018-05-30', '2018-06-06', '2018-09-02']
 shonei_placeholder = '(?:(?<!SP).*(?!LAA).*\d\">(\w*.\w*).*(?=RP).*(?=LAA).*(?=2<).*(?!SP).*(?!LAA))'
 #(?:(?<=[0-9]{4}\">)|(?<=[0-9]{3}\">))(?:[A-Z][a-z]*|[?:A-Z\.]*?|(?:[A-Z][a-z]*.[A-Z][a-z]*)|([A-Z][a-z]*.[a-z]*.[a-z]*)).(?:(?:[A-Z][a-z]*)|(?:[a-z]*[A-Z][a-z]*)|(?:[A-Z][a-z]*-*?[A-Z][a-z]*))</a></td><td><span.style="color..683300">(SP)(?=\<).*?(?<=\D"\>)([A-Z]{2,3})(?=</td>).*?(?:(?<=[0-9]{4}\">)|(?<=[0-9]{3}\">))(?:[A-Z][a-z]*|[?:A-Z\.]*?|(?:[A-Z][a-z]*.[A-Z][a-z]*)|(?:[A-Z][a-z]*.[a-z]*.[a-z]*)).(?:(?:[A-Z][a-z]*)|(?:[a-z]*[A-Z][a-z]*)|(?:[A-Z][a-z]*[A-Z][a-z]*))</a></td><td><span.style="color..683300">(SP)(?=\<).*?(?<=\D"\>)([A-Z]{2,3})(?=</td>)|(?:(?<!SP).*(?!LAA).*\d\">(\w*.\w*).*(?=RP).*(?=LAA).*(?=2<).*(?!SP).*(?!LAA))
 
@@ -250,6 +251,48 @@ def delete_atl_weather(games):
             game_table3.remove(game_table3[index[0]])
     return game_table3
 
+def add_half_game(date, table):
+    if ((date_today.isoformat() == date) & (('Noah Syndergaard', 'SP', 'NYM') in table)):
+        table.insert(table.index(('Noah Syndergaard', 'SP', 'NYM')),('Michael Soroka', 'SP', 'ATL'))
+        table.remove(('Shohei Ohtani', 'SP', 'LAA'))
+        return table
+    else:
+        return table
+    
+def remake_table(table, table1, date):
+    if date_today.isoformat() in date:
+        return [table[i] + table[i+1] for i in range(0, len(table), 2)]
+    else:
+        return table1
+
+def add_4_24(date, table):
+    if date.isoformat() == '2018-04-24':
+        table.insert(table.index(('Tyler Mahle', 'SP', 'CIN')),('Brandon McCarthy', 'SP', 'ATL'))
+        table.insert(table.index(('Kyle Freeland', 'SP', 'COL')),('Eric Lauer', 'SP', 'SD'))
+        table.remove(('Charlie Morton', 'SP', 'HOU'))
+        return table
+    if date.isoformat() == '2018-05-03':
+        table.append(('Wade LeBlanc', 'SP', 'SEA'))
+        table.insert(table.index(('Mike Fiers', 'SP', 'OAK')),('Lance McCullers', 'SP', 'HOU'))
+        table.remove(('Shohei Ohtani', 'SP', 'LAA'))
+        return table
+    if date.isoformat() == '2018-04-08':
+        table.insert(table.index(('Matt Harvey', 'SP', 'CIN')),('Shohei Ohtani', 'SP', 'LAA'))
+        return table
+    else:
+        return table
+    
+def remove_ohtani(date, table):
+    if (date.isoformat() not in shohei_ohtani_games) and ('Shohei Ohtani' in np.ravel(table) and (date.isoformat() != '2018-04-08')):
+        new = [(str(np.ravel(table)[i]), str(np.ravel(table)[i+1]), str(np.ravel(table)[i+2])) for i in range(0, len(np.ravel(table)), 3) if np.ravel(table)[i] != 'Shohei Ohtani']
+        if game_table4[-1:][0] not in new:
+            new.append(game_table4[-1:][0])
+            return [new[i] + new[i+1] for i in range(0, len(new), 2)]
+    else:
+        return table
+
+
+#date_start = int(input("Input Date to Work Back From (yyyy): ")), int(input("Input Date to Work Back From (mm): ")), int(input("Input Date to Work Back From (dd): "))
 date_finish = int(input("Input Date to End on (yyyy): ")), int(input("Input Date to End on (mm): ")), int(input("Input Date to End on (dd): "))
 file_name = input('Name of file to save game data under: ')
 
@@ -302,6 +345,12 @@ while date_today != date(date_finish[0], date_finish[1], date_finish[2]):
         pattern = re.compile(r"([0-9]*?)(/)([0-9]*?)(/)([0-9]{4})")
         date_today = date(int(pattern.search(str(current_date[0])).group(5)), int(pattern.search(str(current_date[0])).group(1)), int(pattern.search(str(current_date[0])).group(3)))
         today_date = datetime(int(pattern.search(str(current_date[0])).group(5)), int(pattern.search(str(current_date[0])).group(1)), int(pattern.search(str(current_date[0])).group(3)), 12, 30)
+        
+        # Add Missing Pitchers
+        game_table4 = add_half_game('2018-05-01', game_table4)
+        game_table4 = add_4_24(date_today, game_table4)
+        game_table5 = remake_table(table=game_table4, table1=game_table5, date=['2018-05-01', '2018-04-24', '2018-05-03', '2018-04-08'])
+        game_table5 = remove_ohtani(date_today, game_table5)
 
         # Trade Players
         game_table5 = [trade_team(game) for game in game_table5]
@@ -310,17 +359,6 @@ while date_today != date(date_finish[0], date_finish[1], date_finish[2]):
         game_table5, del_game = remove_laa_opponent(game_table5)
         game_table3 = delete_laa_weather(game_table2)
         game_table2 = delete_laa(game_table2)
-        del_game = False
-        game_table5, del_game = atlanta_fix(game_table5)
-        game_table3 = delete_atl_weather(game_table2)
-        game_table2 = delete_atl_stats(game_table2)
-        
-        # Fix Otoni Problem
-        '''
-        if len(return_game(game_table2)) > 1:
-            la_after = fix_games(game_table5)                  
-            game_table5[-len(la_after):] = la_after         
-        '''
         
         # Fix double headers
         game_table5 = fix_double_headers(game_table5)
